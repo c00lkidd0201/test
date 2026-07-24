@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{12345678-9ABC-DEF0-1234-56789ABCDEF0}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>KernelDriver</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>WindowsKernelModeDriver</PlatformToolset>
+    <UseOfMfc>Dynamic</UseOfMfc>
+    <DriverType>KMDF</DriverType>
+    <TargetName>KernelDriver</TargetName>
+    <TargetExt>.sys</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>WindowsKernelModeDriver</PlatformToolset>
+    <UseOfMfc>Dynamic</UseOfMfc>
+    <DriverType>KMDF</DriverType>
+    <TargetName>KernelDriver</TargetName>
+    <TargetExt>.sys</TargetExt>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <GenerateDebugInformation>true</GenerateDebugInformation>
+    <SubSystem>Native</SubSystem>
+    <Optimization>Disabled</Optimization>
+    <PreprocessorDefinitions>_DEBUG;_AMD64_;_KERNEL_MODE;$(PreprocessorDefinitions)</PreprocessorDefinitions>
+    <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+    <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+    <WarningLevel>Level3</WarningLevel>
+    <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <GenerateDebugInformation>true</GenerateDebugInformation>
+    <SubSystem>Native</SubSystem>
+    <Optimization>MaxSpeed</Optimization>
+    <FunctionLevelLinking>true</FunctionLevelLinking>
+    <IntrinsicFunctions>true</IntrinsicFunctions>
+    <PreprocessorDefinitions>NDEBUG;_AMD64_;_KERNEL_MODE;$(PreprocessorDefinitions)</PreprocessorDefinitions>
+    <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+    <WarningLevel>Level3</WarningLevel>
+    <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_DEBUG;_AMD64_;_KERNEL_MODE;$(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>inc;$(WDK_DIR)\inc\km;$(WDK_DIR)\inc\ddk;$(WDK_DIR)\inc\crt;$(WDK_DIR)\inc\wlh</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>4100;4127;4201;4214;4514;4515;4706</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <SubSystem>Native</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EntryPointSymbol>DriverEntry</EntryPointSymbol>
+      <Driver>KernelModeDriver</Driver>
+      <AdditionalLibraryDirectories>$(WDK_DIR)\lib\km\amd64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ntoskrnl.lib;WdfDriverEntry.lib;WdfLdr.lib;WdfDpc.lib;WdfSync.lib;WdfCx.lib;WdfPnp.lib;WdfPower.lib;WdfIo.lib;WdfRuntime.lib;WdfSystem.lib;WdfUtil.lib</AdditionalDependencies>
+      <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>NDEBUG;_AMD64_;_KERNEL_MODE;$(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>inc;$(WDK_DIR)\inc\km;$(WDK_DIR)\inc\ddk;$(WDK_DIR)\inc\crt;$(WDK_DIR)\inc\wlh</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>4100;4127;4201;4214;4514;4515;4706</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <SubSystem>Native</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EntryPointSymbol>DriverEntry</EntryPointSymbol>
+      <Driver>KernelModeDriver</Driver>
+      <AdditionalLibraryDirectories>$(WDK_DIR)\lib\km\amd64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ntoskrnl.lib;WdfDriverEntry.lib;WdfLdr.lib;WdfDpc.lib;WdfSync.lib;WdfCx.lib;WdfPnp.lib;WdfPower.lib;WdfIo.lib;WdfRuntime.lib;WdfSystem.lib;WdfUtil.lib</AdditionalDependencies>
+      <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="inc\Driver.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Driver.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="KernelDriver.inf" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

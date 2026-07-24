@@ -1,0 +1,60 @@
+; KernelDriver.inf
+; INF файл для установки KMDF драйвера
+
+[Version]
+Signature   = "$Windows NT$"
+Class      = "System"
+ClassGuid  = {4d36e97d-e325-11ce-bfc1-08002be10318}
+Provider   = "YourName"
+DriverVer   = 01/01/2024,1.0.0.0
+CatalogFile = KernelDriver.cat
+
+[Manufacturer]
+%ManufacturerName% = Standard,NTx86,NTamd64
+
+[Standard.NTx86]
+%DeviceDescription% = KernelDriver_Device, KernelDriver
+
+[Standard.NTamd64]
+%DeviceDescription% = KernelDriver_Device, KernelDriver
+
+[KernelDriver.NTx86]
+CopyFiles=DriverFiles_NTx86
+
+[KernelDriver.NTamd64]
+CopyFiles=DriverFiles_NTamd64
+
+[DriverFiles_NTx86]
+KernelDriver.sys
+
+[DriverFiles_NTamd64]
+KernelDriver.sys
+
+[DestinationDirs]
+DefaultDestDir = 12 ; DIRID_DRIVERS
+
+[KernelDriver_Device.NT]
+CopyFiles=DeviceFiles
+
+[DeviceFiles]
+
+[KernelDriver_Device.NT.HW]
+AddReg=KernelDriver_Device.AddReg
+
+[KernelDriver_Device.NT.Services]
+AddService = KernelDriver, 0x00000002, KernelDriver_Service_Inst
+
+[KernelDriver_Device.AddReg]
+HKR,,DevLoader,,*ntkern
+HKR,,NTMPDriver,,KernelDriver.sys
+
+[KernelDriver_Service_Inst]
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\KernelDriver.sys
+LoadOrderGroup = Base
+
+[Strings]
+ManufacturerName = "Your Company"
+DeviceDescription = "Kernel Mode Driver"
