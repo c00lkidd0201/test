@@ -1,6 +1,7 @@
 #include "DriverInterface.h"
 #include <iostream>
 #include <tlhelp32.h>
+#include <psapi.h>
 
 DriverInterface::DriverInterface() : m_hDevice(INVALID_HANDLE_VALUE)
 {
@@ -161,7 +162,6 @@ ULONG64 DriverInterface::GetModuleBase(ULONG processId, const wchar_t* moduleNam
 ULONG64 DriverInterface::GetModuleBaseInProcess(ULONG processId, const wchar_t* moduleName)
 {
     // Альтернативный метод через EnumProcessModules
-    HMODULE hModule = NULL;
     HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, processId);
     if (!hProcess)
         return 0;

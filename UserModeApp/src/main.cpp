@@ -2,6 +2,8 @@
 #include <iostream>
 #include <iomanip>
 #include <string>
+#include <windows.h>
+#include <tlhelp32.h>
 
 int main()
 {
@@ -15,14 +17,20 @@ int main()
         std::wcerr << L"Failed to connect to driver!" << std::endl;
         std::wcerr << L"Make sure the driver is installed and Test Mode is enabled." << std::endl;
         
-        // Проверка Test Mode
-        BOOL testMode = FALSE;
-        NTSTATUS status = NtQuerySystemInformation((SYSTEM_INFORMATION_CLASS)11, &testMode, sizeof(testMode), NULL);
-        if (testMode) {
-            std::wcout << L"Test Mode is enabled." << std::endl;
-        } else {
-            std::wcerr << L"Test Mode is NOT enabled!" << std::endl;
-            std::wcerr << L"Run: bcdedit /set testsigning on" << std::endl;
+        // Проверка Test Mode через реестр
+        HKEY hKey;
+        if (RegOpenKeyExW(HKEY_LOCAL_MACHINE, L"SYSTEM\\CurrentControlSet\\Control", 0, KEY_READ, &hKey) == ERROR_SUCCESS) {
+            DWORD testMode = 0;
+            DWORD size = sizeof(testMode);
+            if (RegQueryValueExW(hKey, L"TestSigning", NULL, NULL, (LPBYTE)&testMode, &size) == ERROR_SUCCESS) {
+                if (testMode) {
+                    std::wcout << L"Test Mode is enabled." << std::endl;
+                } else {
+                    std::wcerr << L"Test Mode is NOT enabled!" << std::endl;
+                    std::wcerr << L"Run: bcdedit /set testsigning on" << std::endl;
+                }
+            }
+            RegCloseKey(hKey);
         }
         
         return 1;

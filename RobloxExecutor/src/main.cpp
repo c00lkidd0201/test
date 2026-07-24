@@ -1,9 +1,8 @@
 #include "Injector.h"
 #include <iostream>
 #include <iomanip>
-#include <filesystem>
-
-namespace fs = std::filesystem;
+#include <string>
+#include <windows.h>
 
 int main()
 {
@@ -63,24 +62,32 @@ int main()
     std::wcout << L"\nSearching for Roblox DLL..." << std::endl;
     
     // Поиск в текущей директории
-    fs::path dllPath = fs::current_path() / L"RobloxDLL.dll";
-    if (!fs::exists(dllPath)) {
+    WCHAR dllPath[MAX_PATH];
+    GetCurrentDirectoryW(MAX_PATH, dllPath);
+    wcscat_s(dllPath, L"\\RobloxDLL.dll");
+    
+    HANDLE hFile = CreateFileW(dllPath, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
+    if (hFile == INVALID_HANDLE_VALUE) {
         // Поиск в поддиректории
-        dllPath = fs::current_path() / L".." / L"RobloxDLL" / L"Release" / L"RobloxDLL.dll";
+        GetCurrentDirectoryW(MAX_PATH, dllPath);
+        wcscat_s(dllPath, L"\\..\\RobloxDLL\\Release\\RobloxDLL.dll");
+        hFile = CreateFileW(dllPath, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
     }
     
-    if (!fs::exists(dllPath)) {
+    if (hFile == INVALID_HANDLE_VALUE) {
         std::wcerr << L"RobloxDLL.dll not found!" << std::endl;
-        std::wcout << L"Expected path: " << dllPath.wstring() << std::endl;
+        std::wcout << L"Expected path: " << dllPath << std::endl;
+        if (hFile != INVALID_HANDLE_VALUE) CloseHandle(hFile);
         return 1;
     }
+    CloseHandle(hFile);
     
-    std::wcout << L"Found DLL: " << dllPath.wstring() << std::endl;
+    std::wcout << L"Found DLL: " << dllPath << std::endl;
     
     // Инъекция DLL
     std::wcout << L"\nInjecting DLL into Roblox process..." << std::endl;
     
-    if (injector.InjectDLL(robloxPid, dllPath.c_str())) {
+    if (injector.InjectDLL(robloxPid, dllPath)) {
         std::wcout << L"DLL injected successfully!" << std::endl;
     } else {
         std::wcerr << L"Failed to inject DLL!" << std::endl;

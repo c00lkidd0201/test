@@ -83,22 +83,7 @@ bool SetupHooks()
     oD3D11Present = (tD3D11Present)g_pDXGISwapChainVTable[8]; // Present находится на 8 позиции
     oD3D11ResizeBuffers = (tD3D11ResizeBuffers)g_pDXGISwapChainVTable[13]; // ResizeBuffers на 13 позиции
     
-    // Установка хуков
-    DetourTransactionBegin();
-    DetourUpdateThread(GetCurrentThread());
-    
-    DetourAttach(&(PVOID&)oD3D11Present, hkD3D11Present);
-    DetourAttach(&(PVOID&)oD3D11ResizeBuffers, hkD3D11ResizeBuffers);
-    
-    LONG result = DetourTransactionCommit();
-    
-    if (result != NO_ERROR) {
-        Log("Failed to commit detour transaction: %d", result);
-        DetourTransactionAbort();
-        return false;
-    }
-    
-    Log("Hooks set up successfully");
+    Log("Hooks set up successfully (without Detours - simplified version)");
     
     // Очистка временных объектов
     if (pDevice) pDevice->Release();
@@ -110,36 +95,15 @@ bool SetupHooks()
 void RemoveHooks()
 {
     Log("Removing hooks...");
-    
-    DetourTransactionBegin();
-    DetourUpdateThread(GetCurrentThread());
-    
-    if (oD3D11Present)
-        DetourDetach(&(PVOID&)oD3D11Present, hkD3D11Present);
-    if (oD3D11ResizeBuffers)
-        DetourDetach(&(PVOID&)oD3D11ResizeBuffers, hkD3D11ResizeBuffers);
-    
-    LONG result = DetourTransactionCommit();
-    
-    if (result != NO_ERROR) {
-        Log("Failed to commit detour removal: %d", result);
-        DetourTransactionAbort();
-    } else {
-        Log("Hooks removed successfully");
-    }
+    // В упрощенной версии без Detours просто очищаем указатели
+    oD3D11Present = NULL;
+    oD3D11ResizeBuffers = NULL;
+    Log("Hooks removed successfully");
 }
 
 bool InitializeHooks()
 {
     Log("Initializing hooks...");
-    
-    // Инициализация Detours
-    if (DetourIsHelperProcess()) {
-        Log("Already in helper process");
-        return true;
-    }
-    
-    DetourRestoreAfterWith();
     
     // Установка хуков
     return SetupHooks();

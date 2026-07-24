@@ -1,7 +1,8 @@
 #pragma once
 
 #include <windows.h>
-#include <detours.h>
+#include <d3d11.h>
+#include <dxgi.h>
 
 // Прототипы функций для хуков
 typedef HRESULT (WINAPI *tD3D11Present)(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT Flags);
