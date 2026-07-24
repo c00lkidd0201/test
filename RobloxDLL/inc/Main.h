@@ -19,3 +19,9 @@ extern HMODULE g_hModule;
 
 // Функция логирования (объявление для Hooks.cpp)
 void Log(const char* format, ...);
+
+// Объявления для Hooks.cpp
+bool SetupHooks();
+void RemoveHooks();
+bool InitializeHooks();
+void CleanupHooks();

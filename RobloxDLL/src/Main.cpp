@@ -11,26 +11,30 @@ void Log(const char* format, ...) {
     return;
 }
 
-// C-функция для инициализации хуков
-extern "C" __declspec(dllexport) void Initialize() {
+// Функция для инициализации хуков
+void Initialize() {
     Log("Initialize() called");
+    InitializeHooks();
 }
 
-// C-функция для очистки
-extern "C" __declspec(dllexport) void Cleanup() {
+// Функция для очистки
+void Cleanup() {
     Log("Cleanup() called");
+    CleanupHooks();
 }
 
 // Основная функция DLL
-BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved) {
+extern "C" EXPORT BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved) {
     switch (ul_reason_for_call) {
     case DLL_PROCESS_ATTACH: {
         g_hModule = hModule;
         Log("DLL_PROCESS_ATTACH");
+        Initialize();
         break;
     }
     case DLL_PROCESS_DETACH: {
         Log("DLL_PROCESS_DETACH");
+        Cleanup();
         break;
     }
     case DLL_THREAD_ATTACH:
