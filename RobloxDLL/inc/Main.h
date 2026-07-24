@@ -16,3 +16,6 @@ EXPORT void Cleanup();
 
 // Глобальные переменные
 extern HMODULE g_hModule;
+
+// Функция логирования (объявление для Hooks.cpp)
+void Log(const char* format, ...);

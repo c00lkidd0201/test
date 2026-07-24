@@ -68,4 +68,5 @@ private:
     
     // Вспомогательные функции
     bool SendIOCTL(DWORD ioControlCode, LPVOID inputBuffer, ULONG inputSize, LPVOID outputBuffer, ULONG outputSize, LPDWORD bytesReturned);
+    ULONG FindProcessIdByName(const wchar_t* processName);
 };

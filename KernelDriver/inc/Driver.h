@@ -1,7 +1,26 @@
 #pragma once
 
+// Для KMDF драйвера используем WDF заголовочные файлы
+// Если WDK не установлен, используем стандартные заголовочные файлы
+#ifdef _KERNEL_MODE
 #include <ntddk.h>
 #include <wdf.h>
+#else
+// Заглушки для сборки без WDK
+#include <windows.h>
+typedef LONG NTSTATUS;
+#define STATUS_SUCCESS 0
+#define STATUS_INVALID_DEVICE_REQUEST 0xC0000010
+#define STATUS_INFO_LENGTH_MISMATCH 0xC0000004
+#define STATUS_ACCESS_VIOLATION 0xC0000005
+#define STATUS_NOT_FOUND 0xC0000225
+#define FILE_DEVICE_UNKNOWN 0x00000022
+typedef struct _UNICODE_STRING {
+    USHORT Length;
+    USHORT MaximumLength;
+    PWSTR Buffer;
+} UNICODE_STRING, *PUNICODE_STRING;
+#endif
 
 // {GUID для драйвера}
 DEFINE_GUID(GUID_DEVINTERFACE_KernelDriver, 
