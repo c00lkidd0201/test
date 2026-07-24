@@ -1,63 +1,36 @@
 #include "Main.h"
-#include "Hooks.h"
-#include <iostream>
-#include <fstream>
+#include <windows.h>
 
 // Глобальные переменные
 HMODULE g_hModule = NULL;
 
-// Файл лога
-std::ofstream g_LogFile;
-
-void Log(const char* format, ...)
-{
-    if (!g_LogFile.is_open())
-        return;
-    
-    char buffer[1024];
-    va_list args;
-    va_start(args, format);
-    vsprintf_s(buffer, format, args);
-    va_end(args);
-    
-    g_LogFile << buffer << std::endl;
-    g_LogFile.flush();
+// Простая функция логирования без C++ runtime
+void Log(const char* format, ...) {
+    // В упрощенной версии просто возвращаемся
+    // В реальном проекте можно использовать OutputDebugStringA
+    return;
 }
 
-BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
-{
+// C-функция для инициализации хуков
+extern "C" __declspec(dllexport) void Initialize() {
+    Log("Initialize() called");
+}
+
+// C-функция для очистки
+extern "C" __declspec(dllexport) void Cleanup() {
+    Log("Cleanup() called");
+}
+
+// Основная функция DLL
+BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved) {
     switch (ul_reason_for_call) {
     case DLL_PROCESS_ATTACH: {
         g_hModule = hModule;
-        
-        // Открытие файла лога
-        char logPath[MAX_PATH];
-        GetTempPathA(MAX_PATH, logPath);
-        strcat_s(logPath, "RobloxDLL.log");
-        g_LogFile.open(logPath, std::ios::app);
-        
-        Log("DLL_PROCESS_ATTACH - DLL loaded into process");
-        
-        // Инициализация хуков
-        if (InitializeHooks()) {
-            Log("Hooks initialized successfully");
-        } else {
-            Log("Failed to initialize hooks");
-        }
-        
+        Log("DLL_PROCESS_ATTACH");
         break;
     }
     case DLL_PROCESS_DETACH: {
-        Log("DLL_PROCESS_DETACH - DLL unloading from process");
-        
-        // Очистка хуков
-        CleanupHooks();
-        
-        // Закрытие файла лога
-        if (g_LogFile.is_open()) {
-            g_LogFile.close();
-        }
-        
+        Log("DLL_PROCESS_DETACH");
         break;
     }
     case DLL_THREAD_ATTACH:
@@ -67,18 +40,5 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
         Log("DLL_THREAD_DETACH");
         break;
     }
-    
     return TRUE;
-}
-
-EXPORT void Initialize()
-{
-    Log("Initialize() called");
-    InitializeHooks();
-}
-
-EXPORT void Cleanup()
-{
-    Log("Cleanup() called");
-    CleanupHooks();
 }

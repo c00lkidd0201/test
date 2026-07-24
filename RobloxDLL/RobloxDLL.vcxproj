@@ -21,7 +21,7 @@
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v143</PlatformToolset>
-    <UseOfMfc>Dynamic</UseOfMfc>
+    <UseOfMfc>False</UseOfMfc>
     <TargetName>RobloxDLL</TargetName>
     <TargetExt>.dll</TargetExt>
   </PropertyGroup>
@@ -29,7 +29,7 @@
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v143</PlatformToolset>
-    <UseOfMfc>Dynamic</UseOfMfc>
+    <UseOfMfc>False</UseOfMfc>
     <TargetName>RobloxDLL</TargetName>
     <TargetExt>.dll</TargetExt>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -51,14 +51,13 @@
     <Optimization>Disabled</Optimization>
     <PreprocessorDefinitions>_DEBUG;_WINDOWS;$(PreprocessorDefinitions)</PreprocessorDefinitions>
     <BasicRuntimeChecks>Default</BasicRuntimeChecks>
-    <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+    <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     <WarningLevel>Level3</WarningLevel>
     <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-    <CppLanguageStandard>stdcpp17</CppLanguageStandard>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <GenerateDebugInformation>true</GenerateDebugInformation>
+    <GenerateDebugInformation>false</GenerateDebugInformation>
     <SubSystem>Windows</SubSystem>
     <Optimization>MaxSpeed</Optimization>
     <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -66,8 +65,7 @@
     <PreprocessorDefinitions>NDEBUG;_WINDOWS;$(PreprocessorDefinitions)</PreprocessorDefinitions>
     <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     <WarningLevel>Level3</WarningLevel>
-    <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-    <CppLanguageStandard>stdcpp17</CppLanguageStandard>
+    <DebugInformationFormat>None</DebugInformationFormat>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -75,15 +73,17 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;$(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
+      <ConformanceMode>false</ConformanceMode>
       <AdditionalIncludeDirectories>inc;$(WindowsSDK_IncludePath)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4996;4244;4005</DisableSpecificWarnings>
+      <ExceptionHandling>SyncCThrow</ExceptionHandling>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EntryPointSymbol>DllMain</EntryPointSymbol>
-      <AdditionalDependencies>d3d11.lib;dxgi.lib;d3dcompiler.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;dxgi.lib;kernel32.lib;user32.lib;gdi32.lib</AdditionalDependencies>
+      <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -94,15 +94,17 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;$(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
+      <ConformanceMode>false</ConformanceMode>
       <AdditionalIncludeDirectories>inc;$(WindowsSDK_IncludePath)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4996;4244;4005</DisableSpecificWarnings>
+      <ExceptionHandling>Sync</ExceptionHandling>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
       <EntryPointSymbol>DllMain</EntryPointSymbol>
-      <AdditionalDependencies>d3d11.lib;dxgi.lib;d3dcompiler.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;dxgi.lib;kernel32.lib;user32.lib;gdi32.lib</AdditionalDependencies>
+      <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

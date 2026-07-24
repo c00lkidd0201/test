@@ -21,7 +21,7 @@
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v143</PlatformToolset>
-    <UseOfMfc>Dynamic</UseOfMfc>
+    <UseOfMfc>False</UseOfMfc>
     <TargetName>KernelDriver</TargetName>
     <TargetExt>.sys</TargetExt>
   </PropertyGroup>
@@ -29,7 +29,7 @@
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v143</PlatformToolset>
-    <UseOfMfc>Dynamic</UseOfMfc>
+    <UseOfMfc>False</UseOfMfc>
     <TargetName>KernelDriver</TargetName>
     <TargetExt>.sys</TargetExt>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -38,10 +38,8 @@
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -51,7 +49,7 @@
     <Optimization>Disabled</Optimization>
     <PreprocessorDefinitions>_DEBUG;_AMD64_;_KERNEL_MODE;$(PreprocessorDefinitions)</PreprocessorDefinitions>
     <BasicRuntimeChecks>Default</BasicRuntimeChecks>
-    <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+    <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     <WarningLevel>Level3</WarningLevel>
     <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
   </PropertyGroup>
@@ -73,9 +71,10 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_AMD64_;_KERNEL_MODE;$(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
+      <ConformanceMode>false</ConformanceMode>
       <AdditionalIncludeDirectories>inc</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4100;4127;4201;4214;4514;4515;4706</DisableSpecificWarnings>
+      <ExceptionHandling>Sync</ExceptionHandling>
     </ClCompile>
     <Link>
       <SubSystem>Native</SubSystem>
@@ -94,9 +93,10 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_AMD64_;_KERNEL_MODE;$(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
+      <ConformanceMode>false</ConformanceMode>
       <AdditionalIncludeDirectories>inc</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4100;4127;4201;4214;4514;4515;4706</DisableSpecificWarnings>
+      <ExceptionHandling>Sync</ExceptionHandling>
     </ClCompile>
     <Link>
       <SubSystem>Native</SubSystem>

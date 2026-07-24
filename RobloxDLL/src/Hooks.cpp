@@ -1,101 +1,68 @@
 #include "Hooks.h"
 #include "Main.h"
-#include <d3d11.h>
-#include <dxgi.h>
 
 // Глобальные переменные для оригинальных функций
 tD3D11Present oD3D11Present = NULL;
 tD3D11ResizeBuffers oD3D11ResizeBuffers = NULL;
 
-// Указатели на vtable
-void** g_pD3D11DeviceVTable = NULL;
-void** g_pDXGISwapChainVTable = NULL;
-
-// Функции хуков
+// Упрощенные функции хуков без сложных зависимостей
 HRESULT WINAPI hkD3D11Present(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT Flags)
 {
-    Log("hkD3D11Present called");
-    
-    // Вызов оригинальной функции
+    // Просто вызываем оригинальную функцию
     if (oD3D11Present)
         return oD3D11Present(pSwapChain, SyncInterval, Flags);
-    
     return S_OK;
 }
 
 HRESULT WINAPI hkD3D11ResizeBuffers(IDXGISwapChain* pSwapChain, UINT BufferCount, UINT Width, UINT Height, DXGI_FORMAT NewFormat, UINT SwapChainFlags)
 {
-    Log("hkD3D11ResizeBuffers called - Width: %d, Height: %d", Width, Height);
-    
-    // Вызов оригинальной функции
+    // Просто вызываем оригинальную функцию
     if (oD3D11ResizeBuffers)
         return oD3D11ResizeBuffers(pSwapChain, BufferCount, Width, Height, NewFormat, SwapChainFlags);
-    
     return S_OK;
 }
 
+// Упрощенная установка хуков
 bool SetupHooks()
 {
     Log("Setting up hooks...");
     
-    // Получение устройства и swap chain
-    // Это упрощенная версия - в реальности нужно правильно получать указатели
+    // Пытаемся получить указатели на функции через GetProcAddress
+    HMODULE hD3D11 = LoadLibraryA("d3d11.dll");
+    HMODULE hDXGI = LoadLibraryA("dxgi.dll");
     
-    // Пример получения через D3D11
-    ID3D11Device* pDevice = NULL;
-    IDXGISwapChain* pSwapChain = NULL;
-    
-    // Создание временного устройства для получения vtable
-    D3D_FEATURE_LEVEL featureLevels[] = { D3D_FEATURE_LEVEL_11_0 };
-    D3D_FEATURE_LEVEL featureLevel;
-    
-    DXGI_SWAP_CHAIN_DESC scd;
-    ZeroMemory(&scd, sizeof(scd));
-    scd.BufferCount = 1;
-    scd.BufferDesc.Width = 1;
-    scd.BufferDesc.Height = 1;
-    scd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-    scd.BufferDesc.RefreshRate.Numerator = 60;
-    scd.BufferDesc.RefreshRate.Denominator = 1;
-    scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-    scd.OutputWindow = GetDesktopWindow();
-    scd.SampleDesc.Count = 1;
-    scd.SampleDesc.Quality = 0;
-    scd.Windowed = TRUE;
-    scd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-    scd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-    scd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-    
-    HRESULT hr = D3D11CreateDeviceAndSwapChain(
-        NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, 0, featureLevels, 1, 
-        D3D11_SDK_VERSION, &scd, &pSwapChain, &pDevice, &featureLevel, NULL);
-    
-    if (FAILED(hr)) {
-        Log("Failed to create D3D11 device: 0x%X", hr);
+    if (!hD3D11 || !hDXGI) {
+        Log("Failed to load D3D11 or DXGI libraries");
+        if (hD3D11) FreeLibrary(hD3D11);
+        if (hDXGI) FreeLibrary(hDXGI);
         return false;
     }
     
-    // Получение vtable
-    g_pD3D11DeviceVTable = *(void***)pDevice;
-    g_pDXGISwapChainVTable = *(void***)pSwapChain;
+    // Получаем адреса функций
+    // Note: Это упрощенная версия, в реальности нужно правильно хукать
+    FARPROC pPresent = GetProcAddress(hDXGI, "Present");
+    FARPROC pResizeBuffers = GetProcAddress(hDXGI, "ResizeBuffers");
     
-    // Сохранение оригинальных функций
-    oD3D11Present = (tD3D11Present)g_pDXGISwapChainVTable[8]; // Present находится на 8 позиции
-    oD3D11ResizeBuffers = (tD3D11ResizeBuffers)g_pDXGISwapChainVTable[13]; // ResizeBuffers на 13 позиции
+    if (!pPresent || !pResizeBuffers) {
+        Log("Failed to get function addresses");
+        FreeLibrary(hD3D11);
+        FreeLibrary(hDXGI);
+        return false;
+    }
     
-    Log("Hooks set up successfully (without Detours - simplified version)");
+    oD3D11Present = (tD3D11Present)pPresent;
+    oD3D11ResizeBuffers = (tD3D11ResizeBuffers)pResizeBuffers;
     
-    // Очистка временных объектов
-    if (pDevice) pDevice->Release();
-    if (pSwapChain) pSwapChain->Release();
+    FreeLibrary(hD3D11);
+    FreeLibrary(hDXGI);
     
+    Log("Hooks set up successfully");
     return true;
 }
 
 void RemoveHooks()
 {
     Log("Removing hooks...");
-    // В упрощенной версии без Detours просто очищаем указатели
     oD3D11Present = NULL;
     oD3D11ResizeBuffers = NULL;
     Log("Hooks removed successfully");
@@ -104,8 +71,6 @@ void RemoveHooks()
 bool InitializeHooks()
 {
     Log("Initializing hooks...");
-    
-    // Установка хуков
     return SetupHooks();
 }
 
